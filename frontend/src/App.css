@@ -1,0 +1,104 @@
+/* Bootstrap 5 Imports */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
+@import url('https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/flatly/bootstrap.min.css');
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#root {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.auth-container {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+}
+
+.auth-left {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    color: white;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.auth-right {
+    padding: 3rem;
+}
+
+.auth-tabs {
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 2rem;
+}
+
+.auth-tab {
+    padding: 1rem 2rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #6c757d;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.auth-tab.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+    padding: 0.75rem;
+    font-weight: 600;
+}
+
+.logo-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.alert {
+    display: block;
+}
+
+.alert.show {
+    display: block;
+}
+
+.password-toggle {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.password-wrapper {
+    position: relative;
+}

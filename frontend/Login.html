@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SmartSchedule - Login/Register</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .auth-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+        .auth-left {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .auth-right {
+            padding: 3rem;
+        }
+        .auth-tabs {
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+        .auth-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .auth-tab.active {
+            color: #0d6efd;
+            border-bottom-color: #0d6efd;
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-primary {
+            padding: 0.75rem;
+            font-weight: 600;
+        }
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .alert {
+            display: none;
+        }
+        .alert.show {
+            display: block;
+        }
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .password-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="row g-0">
+                <!-- Left Side -->
+                <div class="col-md-5 auth-left">
+                    <div>
+                        <i class="bi bi-calendar-check logo-icon"></i>
+                        <h2 class="fw-bold mb-3">SmartSchedule</h2>
+                        <p class="mb-0">Your intelligent academic scheduling solution</p>
+                    </div>
+                </div>
+
+                <!-- Right Side -->
+                <div class="col-md-7 auth-right">
+                    <!-- Tabs -->
+                    <div class="auth-tabs d-flex justify-content-center">
+                        <button class="auth-tab active" onclick="showTab('login')">Login</button>
+                        <button class="auth-tab" onclick="showTab('register')">Register</button>
+                    </div>
+
+                    <!-- Alerts -->
+                    <div id="alertContainer"></div>
+
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <h4 class="fw-bold mb-4">Welcome Back!</h4>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <div class="input-group password-wrapper">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required />
+                                    <span class="password-toggle" onclick="togglePassword('loginPassword')">
+                                        <i class="bi bi-eye" id="loginPasswordIcon"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" />
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </button>
+                            <div class="text-center">
+                                <small class="text-muted">Don't have an account? <a href="#" onclick="showTab('register'); return false;">Register here</a></small>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" style="display: none;">
+                        <h4 class="fw-bold mb-4">Create Account</h4>
+                        <form onsubmit="handleRegister(event)">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" placeholder="First name" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" placeholder="Last name" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <div class="input-group password-wrapper">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="registerPassword" placeholder="Create password" required minlength="6" />
+                                    <span class="password-toggle" onclick="togglePassword('registerPassword')">
+                                        <i class="bi bi-eye" id="registerPasswordIcon"></i>
+                                    </span>
+                                </div>
+                                <small class="text-muted">Password must be at least 6 characters</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Role</label>
+                                <select class="form-select" id="role" required>
+                                    <option value="">Select your role</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Scheduling committee">Scheduling Committee</option>
+                                    <option value="Load committee">Load Committee</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-person-plus me-2"></i>Register
+                            </button>
+                            <div class="text-center">
+                                <small class="text-muted">Already have an account? <a href="#" onclick="showTab('login'); return false;">Login here</a></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Base URL - Update this with your backend URL
+        const API_URL = 'http://localhost:3000/api'; // Change this to your backend server URL
+
+        // Show/Hide tabs
+        function showTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+            
+            // Clear alerts
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + 'Icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHTML;
+        }
+
+        // Handle Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Login successful! Redirecting...', 'success');
+                    
+                    // Store user data in session storage
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                    sessionStorage.setItem('token', data.token);
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'Scheduling committee') {
+                            window.location.href = 'committee-dashboard.html';
+                        } else if (data.user.role === 'Load committee') {
+                            window.location.href = 'load-committee-dashboard.html';
+                        } else if (data.user.role === 'Student') {
+                            window.location.href = 'student-dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Login failed. Please check your credentials.', 'danger');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Connection error. Please try again later.', 'danger');
+            }
+        }
+
+        // Handle Register
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('role').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        First_Name: firstName,
+                        Last_Name: lastName,
+                        Email: email,
+                        Password: password,
+                        role: role
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Registration successful! Please login.', 'success');
+                    
+                    // Clear form
+                    document.getElementById('firstName').value = '';
+                    document.getElementById('lastName').value = '';
+                    document.getElementById('registerEmail').value = '';
+                    document.getElementById('registerPassword').value = '';
+                    document.getElementById('role').value = '';
+                    
+                    // Switch to login tab after 2 seconds
+                    setTimeout(() => {
+                        document.querySelector('.auth-tab').click();
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Registration failed. Please try again.', 'danger');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showAlert('Connection error. Please try again later.', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>
