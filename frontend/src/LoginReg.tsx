@@ -22,34 +22,42 @@ function LoginReg() {
   };
 
   const handleLogin = async (event: FormEvent) => {
-    event.preventDefault();
-    try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Email: loginEmail, Password: loginPassword }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        showAlertMessage('Login successful! Redirecting...', 'success');
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-        sessionStorage.setItem('token', data.token);
-        setTimeout(() => {
-          switch(data.user.role) {
-            case 'Scheduler': window.location.href = '/scheduler-dashboard'; break;
-            case 'LoadCommittee': window.location.href = '/load-committee-dashboard'; break;
-            case 'Faculty': window.location.href = '/faculty-dashboard'; break;
-            default: window.location.href = '/student-dashboard'; break;
-          }
-        }, 1500);
-      } else {
-        showAlertMessage(data.message || 'Login failed. Please check your credentials.', 'danger');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      showAlertMessage('Connection error. Please check if the backend server is running.', 'danger');
+  event.preventDefault();
+  try {
+    const response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ Email: loginEmail, Password: loginPassword }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      showAlertMessage('Login successful! Redirecting...', 'success');
+      sessionStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('token', data.token);
+      setTimeout(() => {
+        switch(data.user.role) {
+          case 'Scheduler': 
+            window.location.href = '/scheduling-committee';  // Changed from /scheduler-dashboard
+            break;
+          case 'LoadCommittee': 
+            window.location.href = '/load-committee-dashboard'; 
+            break;
+          case 'Faculty': 
+            window.location.href = '/faculty-dashboard'; 
+            break;
+          default: 
+            window.location.href = '/student-dashboard'; 
+            break;
+        }
+      }, 1500);
+    } else {
+      showAlertMessage(data.message || 'Login failed. Please check your credentials.', 'danger');
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    showAlertMessage('Connection error. Please check if the backend server is running.', 'danger');
+  }
+};
 
   const handleRegister = async (event: FormEvent) => {
     event.preventDefault();

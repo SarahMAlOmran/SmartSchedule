@@ -10,13 +10,27 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Sara:1234512345@cluster0.ctncent.mongodb.net/SamrtSchedular';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Sara:1234512345@cluster0.ctncent.mongodb.net/SmartSchedular';
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ Connected to MongoDB'))
+  .then(() => console.log('✅ Connected to MongoDB (SmartSchedular database)'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// User Schema (matching your database structure)
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'SmartSchedule Backend is running!',
+    status: 'ok',
+    endpoints: {
+      login: 'POST /api/login',
+      register: 'POST /api/register',
+      irregularStudents: 'GET /api/irregular-students',
+      courses: 'GET /api/courses'
+    }
+  });
+});
+
+// User Schema
 const userSchema = new mongoose.Schema({
   userID: Number,
   First_Name: { type: String, required: true },
@@ -29,8 +43,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema, 'User');
 
-// ROUTES
-
 // Register endpoint
 app.post('/api/register', async (req, res) => {
   try {
@@ -42,9 +54,9 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
-    // Get the highest userID and increment
+    // Get the highest userID and increment (starting from 16 since there are 15 existing users)
     const lastUser = await User.findOne().sort({ userID: -1 });
-    const newUserID = lastUser ? lastUser.userID + 1 : 1;
+    const newUserID = lastUser ? lastUser.userID + 1 : 16;
 
     // Create new user
     const newUser = new User({
@@ -106,8 +118,95 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Get all irregular students
+app.get('/api/irregular-students', async (req, res) => {
+  try {
+    // Define schema inline to avoid conflicts
+    const studentSchema = new mongoose.Schema({}, { strict: false });
+    
+    // Check if model already exists
+    let Student;
+    try {
+      Student = mongoose.model('student');
+    } catch {
+      Student = mongoose.model('student', studentSchema, 'student');
+    }
+
+    const irregularStudents = await Student.find({ irregulars: true });
+    res.json(irregularStudents);
+  } catch (error) {
+    console.error('Error fetching irregular students:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Add irregular student
+app.post('/api/irregular-students', async (req, res) => {
+  try {
+    const studentSchema = new mongoose.Schema({}, { strict: false });
+    
+    let Student;
+    try {
+      Student = mongoose.model('student');
+    } catch {
+      Student = mongoose.model('student', studentSchema, 'student');
+    }
+
+    const newStudent = new Student({
+      ...req.body,
+      irregulars: true
+    });
+
+    await newStudent.save();
+    res.status(201).json({ message: 'Irregular student added successfully', student: newStudent });
+  } catch (error) {
+    console.error('Error adding irregular student:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Delete irregular student
+app.delete('/api/irregular-students/:id', async (req, res) => {
+  try {
+    const studentSchema = new mongoose.Schema({}, { strict: false });
+    
+    let Student;
+    try {
+      Student = mongoose.model('student');
+    } catch {
+      Student = mongoose.model('student', studentSchema, 'student');
+    }
+
+    await Student.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Irregular student deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting irregular student:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get all courses
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courseSchema = new mongoose.Schema({}, { strict: false });
+    
+    let Course;
+    try {
+      Course = mongoose.model('Course');
+    } catch {
+      Course = mongoose.model('Course', courseSchema, 'Course');
+    }
+
+    const courses = await Course.find();
+    res.json(courses);
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Backend server running on http://localhost:${PORT}`);
 });
